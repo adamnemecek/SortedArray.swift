@@ -7,7 +7,7 @@
 //
 
 public struct SortedSlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
-RangeReplaceableCollection, CustomStringConvertible {
+RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     
     public typealias Base = SortedArray<Element>
     public typealias Index = Base.Index
@@ -21,6 +21,12 @@ RangeReplaceableCollection, CustomStringConvertible {
         self.base = base
         startIndex = range.lowerBound
         endIndex = range.upperBound
+    }
+    
+    public init(arrayLiteral literal: Element...) {
+        base = SortedArray()
+        self.startIndex = base.startIndex
+        self.endIndex = base.endIndex
     }
 
     internal init(base: Base, range: Range<Index>) {
@@ -70,7 +76,13 @@ RangeReplaceableCollection, CustomStringConvertible {
     mutating
     public
     func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-        base.replaceSubrange(subrange, with: newElements)
+        base.replaceSubrange(subrange, with: [])
+        
+        newElements.forEach {
+            guard !contains($0) else { return }
+            append($0)
+        }
+        
     }
 
 }

@@ -84,7 +84,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     
     public subscript(range: Range<Index>) -> SubSequence {
         get {
-            
             return SortedSlice(base: self, range: range)
         }
         set {
