@@ -62,7 +62,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         set {
             guard newValue != self[index] else { return }
             content.remove(at: index)
-            insert(newValue)
+            append(newValue)
         }
     }
     
@@ -150,6 +150,10 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         content.insert(newElement, at: idx)
     }
     
+    public mutating func insert(_ newElement: Element, at i: Index) {
+        append(newElement)
+    }
+    
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
         content.replaceSubrange(subrange, with: newElements)
         content.sort(by: cmp)
@@ -159,12 +163,20 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         return content.removeAll(keepingCapacity: keepCapacity)
     }
     
+    public mutating func remove(at position: Index) -> Iterator.Element {
+        return content.remove(at: position)
+    }
+    
+    public mutating func removeSubrange(_ bounds: Range<Index>) {
+        content.removeSubrange(bounds)
+    }
+    
     public func formIndex(after i: inout Int) {
         i += 1
     }
     
     public func formIndex(before i: inout Int) {
-        i += 1
+        i -= 1
     }
     
     @inline(__always)
