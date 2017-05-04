@@ -1,6 +1,6 @@
 //
 //  SortedSlice.swift
-//  RangeDB
+//  SortedCollection
 //
 //  Created by Adam Nemecek on 4/29/17.
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
@@ -12,8 +12,8 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     public typealias Base = SortedArray<Element>
     public typealias Index = Base.Index
     
-    public let startIndex : Index
-    public let endIndex : Index
+    public private(set) var startIndex : Index
+    public private(set) var endIndex : Index
     
     private(set) internal var base : Base
     
@@ -82,7 +82,7 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
             guard !base.contains($0) else { return }
             base.append($0)
         }
-        
+
     }
 
 }

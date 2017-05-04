@@ -35,6 +35,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         self = []
     }
     
+    
     public init<S : Sequence>(_ sequence: S) where S.Iterator.Element == Element {
         self.init(sequence, cmp: SortedArray.cmp)
     }
@@ -332,13 +333,9 @@ extension SortedSet : SetAlgebra {
     /// - Parameter other: A set of the same type as the current set.
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
-        var cp = self
-        other.forEach {
-            if cp.remove($0) == nil {
-                cp.insert($0)
-            }
-        }
-        return cp
+        let i = AnyIterator(SymmetricDifferenceIterator(a: content, b: other.content, cmp: content.cmp))
+        return SortedSet(i, cmp: content.cmp)
+
     }
     
     /// Returns a new set with the elements that are common to both this set and
