@@ -6,7 +6,7 @@
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-struct SortedArraySlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
+public struct SortedArraySlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
 RangeReplaceableCollection, CustomStringConvertible {
     
     public typealias Base = SortedArray<Element>
@@ -29,7 +29,7 @@ RangeReplaceableCollection, CustomStringConvertible {
         endIndex = range.upperBound
     }
 
-    var description: String {
+    public var description: String {
         return base.content[indices].description
     }
     
@@ -41,7 +41,7 @@ RangeReplaceableCollection, CustomStringConvertible {
         return base.index(before: i)
     }
     
-    subscript(index: Index) -> Element {
+    public subscript(index: Index) -> Element {
         get {
             return base[index]
         }
@@ -50,25 +50,25 @@ RangeReplaceableCollection, CustomStringConvertible {
         }
     }
     
-    func sort() {
-        
+    public func sort() {
+        return
     }
     
-    func sorted() -> [Element] {
+    public func sorted() -> [Element] {
         return Array(self)
     }
     
-    init() {
+    public init() {
         let base = Base()
         self.init(base: Base(), range: base.indices)
-        
     }
     
-    static func ==(lhs: SortedArraySlice, rhs: SortedArraySlice) -> Bool {
+    public static func ==(lhs: SortedArraySlice, rhs: SortedArraySlice) -> Bool {
         return lhs.elementsEqual(rhs)
     }
     
     mutating
+    public
     func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
         base.replaceSubrange(subrange, with: newElements)
     }

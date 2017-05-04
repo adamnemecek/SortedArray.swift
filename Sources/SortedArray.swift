@@ -6,7 +6,7 @@
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-extension Collection {
+internal extension Collection {
     var match: (head: Iterator.Element, tail: SubSequence)? {
         return first.map {
             ($0, dropFirst())
@@ -16,14 +16,14 @@ extension Collection {
 
 
 
-struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
-    typealias Index = Int
+public struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
+    public typealias Index = Int
     
-    typealias SubSequence = SortedArraySlice<Element>
+    public typealias SubSequence = SortedArraySlice<Element>
     internal var content: [Element]
-    typealias Cmp = ((Element, Element)) -> Bool
+    public typealias Cmp = ((Element, Element)) -> Bool
     
-    init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
+    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
         let arr = sequence.sorted(by: cmp)
         
         self.cmp = cmp
@@ -42,7 +42,7 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
             } ?? []
     }
     
-    init() {
+    public init() {
         self = []
     }
     
@@ -50,19 +50,19 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
         self.init(sequence, cmp: SortedArray.cmp)
     }
     
-    init(arrayLiteral literal: Element...) {
+    public init(arrayLiteral literal: Element...) {
         self.init(literal)
     }
     
-    var startIndex: Index {
+    public var startIndex: Index {
         return content.startIndex
     }
     
-    var endIndex: Index {
+    public var endIndex: Index {
         return content.endIndex
     }
     
-    subscript(index: Index) -> Element {
+    public subscript(index: Index) -> Element {
         get {
             return content[index]
         }
@@ -73,23 +73,23 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
         }
     }
     
-    func sorted() -> [Element] {
+    public func sorted() -> [Element] {
         return content
     }
     
-    func sort() {
+    public func sort() {
         return
     }
     
-    var isEmpty : Bool {
+    public var isEmpty : Bool {
         return content.isEmpty
     }
     
-    func contains(_ element: Element) -> Bool {
+    public func contains(_ element: Element) -> Bool {
         return index(of: element) != nil
     }
     
-    subscript(range: Range<Index>) -> SubSequence {
+    public subscript(range: Range<Index>) -> SubSequence {
         get {
             
             return SortedArraySlice(base: self, range: range)
@@ -100,7 +100,7 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
         }
     }
     
-    func index(after i: Index) -> Index {
+    public func index(after i: Index) -> Index {
         return i + 1
     }
     
@@ -122,7 +122,7 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
     //        }
     //    }
     
-    func index(of element: Element, insertion: Bool = false) -> Index? {
+    public func index(of element: Element, insertion: Bool = false) -> Index? {
         var i = indices
         
         while !i.isEmpty {
@@ -153,55 +153,54 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
         }
     }
     
-    func index(of element: Element) -> Index? {
+    public func index(of element: Element) -> Index? {
         return index(of: element, insertion: false)
     }
     
-    func index(before i: Index) -> Index {
+    public func index(before i: Index) -> Index {
         return i + 1
     }
     
-    func min() -> Element? {
+    public func min() -> Element? {
         return first
     }
     
-    func max() -> Element? {
+    public func max() -> Element? {
         return last
     }
     
-    static func ==(lhs: SortedArray, rhs: SortedArray) -> Bool {
+    public static func ==(lhs: SortedArray, rhs: SortedArray) -> Bool {
         return lhs.content == rhs.content
     }
     
-    
-    var description: String {
+    public var description: String {
         return content.description
     }
     
-    var debugDescription: String {
+    public var debugDescription: String {
         return content.debugDescription
     }
     
     @discardableResult
     mutating
-    func uniquelyInsert(newElement: Element) -> Index? {
+    internal func uniquelyInsert(newElement: Element) -> Index? {
         return index(of: newElement, insertion: true).map {
             self.content.insert(newElement, at: $0)
             return $0
         }
     }
     
-    mutating func append(_ newElement: Element) {
+    public mutating func append(_ newElement: Element) {
         uniquelyInsert(newElement: newElement)
     }
     
-    mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
+    public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
         content.replaceSubrange(subrange, with: newElements)
         content.sort(by: cmp)
     }
     
     
-    func formIndex(after i: inout Int) {
+    public func formIndex(after i: inout Int) {
         i += 1
     }
     
@@ -213,44 +212,5 @@ struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollec
     }
     
     internal let cmp : Cmp
-    
-    
 }
-
-
-//extension SortedArray where Element : TimeRanged {
-//
-//    func index(where predicate: (Element) throws -> Element.Stride) rethrows -> Index? {
-//        var i = indices
-//        var candidate : Index? = nil
-//
-//        while !i.isEmpty {
-//            let mid = i.mid
-//            let _$0 = self[mid]
-//            let res = predicate(_$0)
-//
-//
-//
-//            if try! predicate(_$0) {
-//                candidate = mid
-//            }
-//            else {
-//
-//            }
-//
-//            if _$0 == element {
-//                return mid
-//            }
-//            else if cmp(_$0, element) {
-//                i = i.lowerBound..<mid
-//            }
-//            else {
-//                i = mid..<i.upperBound
-//            }
-//        }
-//        return nil
-//    }
-//
-//}
-
 
