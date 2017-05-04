@@ -46,10 +46,10 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         self = []
     }
     
-    internal init(sorted: [Element]) {
+    internal init(sorted: [Element], cmp: Cmp) {
         assert(sorted == sorted.sorted())
         content = sorted
-        cmp = SortedArray.cmp
+        self.cmp = SortedArray.cmp
     }
     
     public init<S : Sequence >(_ sequence: S) where S.Iterator.Element == Element {
@@ -213,10 +213,10 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     
     
     @inline(__always)
-    private static func cmp(_ a: Element, _ b: Element) -> Bool {
+    internal static func cmp(_ a: Element, _ b: Element) -> Bool {
         return a < b
     }
     
-    internal let cmp : Cmp
+    internal var cmp : Cmp
 }
 

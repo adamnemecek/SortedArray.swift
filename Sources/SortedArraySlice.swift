@@ -67,11 +67,11 @@ RangeReplaceableCollection, CustomStringConvertible {
         return lhs.elementsEqual(rhs)
     }
     
-//    mutating
-//    public
-//    func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-//        base.replaceSubrange(subrange, with: newElements)
-//    }
+    mutating
+    public
+    func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
+        base.replaceSubrange(subrange, with: newElements)
+    }
 
 }
 

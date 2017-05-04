@@ -9,21 +9,18 @@
 public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     
     public typealias Index = SortedArray<Element>.Index
-    
-    
     public typealias SubSequence = SortedSlice<Element>
+
     internal var content: SortedArray<Element>
     
-    public typealias Cmp = ((Element, Element)) -> Bool
-    
-    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
+    internal init<S: Sequence>(_ sequence: S, cmp: @escaping SortedArray<Element>.Cmp) where S.Iterator.Element == Element {
         let arr = sequence.sorted(by: cmp)
         
-        self.cmp = cmp
+        
         
         /// we could call `contains` as we go through, but this is linear time
         
-        self.content = arr.match.map { fst in
+        let aa: [Element] = arr.match.map { fst in
             var prev = fst.head
             
             return [prev] + fst.tail.flatMap { e in
@@ -33,8 +30,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
                 return e != prev ? e : nil
             }
             } ?? []
-        
-        
+        content = SortedArray(sorted: aa, cmp: cmp)
     }
     
     public init() {
@@ -42,7 +38,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public init<S : Sequence >(_ sequence: S) where S.Iterator.Element == Element {
-        self.init(sequence, cmp: SortedSet.cmp)
+        self.init(sequence, cmp: SortedArray.cmp)
     }
     
     public init(arrayLiteral literal: Element...) {
@@ -156,7 +152,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
         fatalError()
-        content.sort(by: cmp)
+//        content.sort(by: cmp)
     }
     
     
