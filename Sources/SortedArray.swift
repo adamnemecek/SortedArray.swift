@@ -24,22 +24,9 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public typealias Cmp = ((Element, Element)) -> Bool
     
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
-        let arr = sequence.sorted(by: cmp)
-        
-        self.cmp = cmp
-        
         /// we could call `contains` as we go through, but this is linear time
-        
-        self.content = arr.match.map { fst in
-            var prev = fst.head
-            
-            return [prev] + fst.tail.flatMap { e in
-                defer {
-                    prev = e
-                }
-                return e != prev ? e : nil
-            }
-            } ?? []
+        self.content = sequence.sorted()
+        self.cmp = cmp
     }
     
     public init() {
@@ -52,7 +39,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         self.cmp = SortedArray.cmp
     }
     
-    public init<S : Sequence >(_ sequence: S) where S.Iterator.Element == Element {
+    public init<S : Sequence>(_ sequence: S) where S.Iterator.Element == Element {
         self.init(sequence, cmp: SortedArray.cmp)
     }
     
@@ -109,24 +96,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public func index(after i: Index) -> Index {
         return i + 1
     }
-    
-    //    extension Array {
-    //        func insertionIndexOf(elem: Element, isOrderedBefore: (Element, Element) -> Bool) -> Int {
-    //            var lo = 0
-    //            var hi = self.count - 1
-    //            while lo <= hi {
-    //                let mid = (lo + hi)/2
-    //                if isOrderedBefore(self[mid], elem) {
-    //                    lo = mid + 1
-    //                } else if isOrderedBefore(elem, self[mid]) {
-    //                    hi = mid - 1
-    //                } else {
-    //                    return mid // found at position mid
-    //                }
-    //            }
-    //            return lo // not found, would be inserted at position lo
-    //        }
-    //    }
     
     public func index(of element: Element, insertion: Bool = false) -> Index? {
         var i = indices
@@ -209,8 +178,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public func formIndex(after i: inout Int) {
         i += 1
     }
-    
-    
     
     @inline(__always)
     internal static func cmp(_ a: Element, _ b: Element) -> Bool {

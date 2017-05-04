@@ -37,7 +37,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         self = []
     }
     
-    public init<S : Sequence >(_ sequence: S) where S.Iterator.Element == Element {
+    public init<S : Sequence>(_ sequence: S) where S.Iterator.Element == Element {
         self.init(sequence, cmp: SortedArray.cmp)
     }
     
@@ -59,6 +59,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         }
         set {
             guard content.contains(self[index]) else { return }
+            
 
         }
     }
