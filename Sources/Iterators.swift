@@ -100,7 +100,35 @@ struct UnionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : 
     }
 }
 
-struct SubtractingIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : Comparable {
+struct SubtractionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : Comparable {
+    
+    typealias Element = S.Iterator.Element
+    
+    var a, b: CachingIterator<S>
+    var cmp: (Element, Element) -> Bool
+    
+    init(a: S, b: S, cmp: @escaping (Element, Element) -> Bool) {
+        self.a = CachingIterator(a)
+        self.b = CachingIterator(b)
+        self.cmp = cmp
+    }
+    
+    private(set) var current : Element?
+    
+    mutating
+    func next() -> Element? {
+        while let ca = a.next() {
+            if let cb = b.next(), ca != cb {
+                current = ca
+                break
+            }
+            
+        }
+        return current
+    }
+}
+
+struct IntersectionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : Comparable {
     
     typealias Element = S.Iterator.Element
     

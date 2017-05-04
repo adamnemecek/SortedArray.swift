@@ -156,12 +156,7 @@ extension SortedSet : SetAlgebra {
     ///
     /// - Parameter other: A set of the same type.
     public mutating func formSymmetricDifference(_ other: SortedSet) {
-        
-        other.forEach {
-            if remove($0) == nil {
-                insert($0)
-            }
-        }
+        self = symmetricDifference(other)
     }
     
     
@@ -203,8 +198,7 @@ extension SortedSet : SetAlgebra {
     ///
     /// - Parameter other: A set of the same type as the current set.
     public mutating func formUnion(_ other: SortedSet) {
-        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
-        content = SortedArray(i)
+        self = union(other)
     }
     
     /// Inserts the given element into the set unconditionally.
@@ -243,11 +237,8 @@ extension SortedSet : SetAlgebra {
     }
     
     public func subtracting(_ other: SortedSet) -> SortedSet {
-        var cp = self
-        other.forEach {
-            cp.remove($0)
-        }
-        return cp
+        let i = AnyIterator(SubtractionIterator(a: content, b: other.content, cmp: content.cmp))
+        return SortedSet(i, cmp: content.cmp)
     }
     
     //    @discardableResult
@@ -342,7 +333,11 @@ extension SortedSet : SetAlgebra {
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
         var cp = self
-        cp.formSymmetricDifference(other)
+        other.forEach {
+            if cp.remove($0) == nil {
+                cp.insert($0)
+            }
+        }
         return cp
     }
     
@@ -367,18 +362,8 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func intersection(_ other: SortedSet) -> SortedSet {
-//        var a: [Element] = []
-//        
-//        var i = CachingIterator(indices)
-//        var oi = CachingIterator(other.indices)
-//        
-//        while let ii = i.current, let oii = oi.current {
-//            
-//        }
-            fatalError()
-        var cp = self
-//        cp.content.content = a
-        return cp
+        let i = AnyIterator(IntersectionIterator(a: content, b: other.content, cmp: content.cmp))
+        return SortedSet(i, cmp: content.cmp)
     }
     
     /// Returns a new set with the elements of both this and the given set.
@@ -407,7 +392,8 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func union(_ other: SortedSet) -> SortedSet {
-        return SortedSet(content + other.content, cmp: content.cmp)
+        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
+        return SortedSet(i, cmp: content.cmp)
     }
     
     //    public func contains(_ member: Element) -> Bool {
