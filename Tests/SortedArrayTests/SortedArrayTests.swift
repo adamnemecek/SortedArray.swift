@@ -12,6 +12,10 @@ class SortedArrayTests: XCTestCase {
 //        print(p)
         XCTAssert(p.elementsEqual(s), "Equal")
         
+        for e in input {
+            XCTAssert(p.contains(e), "failed with \(e)")
+        }
+        
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
 //        XCTAssertEqual(SortedArray().text, "Hello, World!")

@@ -105,27 +105,18 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
             let _$0 = self[mid]
             
             if _$0 == element {
-                if insertion {
-                    return nil
-                }
-                else {
-                    return mid
-                }
+                return mid
             }
                 
-            else if cmp(_$0, element) {
+            else if cmp(element, _$0) {
                 i = i.lowerBound..<mid
             }
             else {
                 i = (mid + 1)..<i.upperBound
             }
         }
-        if insertion {
-            return i.lowerBound
-        }
-        else {
-            return nil
-        }
+
+        return insertion ? i.lowerBound : nil
     }
     
     public func index(of element: Element) -> Index? {
