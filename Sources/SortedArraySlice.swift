@@ -79,8 +79,8 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
         base.replaceSubrange(subrange, with: [])
         
         newElements.forEach {
-            guard !contains($0) else { return }
-            append($0)
+            guard !base.contains($0) else { return }
+            base.append($0)
         }
         
     }

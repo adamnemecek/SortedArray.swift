@@ -90,7 +90,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public func index(after i: Index) -> Index {
-        return i + 1
+        return content.index(after: i)
     }
     
     public func index(of element: Element, insertion: Bool = false) -> Index? {
@@ -102,7 +102,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public func index(before i: Index) -> Index {
-        return i + 1
+        return content.index(before: i)
     }
     
     public func min() -> Element? {
