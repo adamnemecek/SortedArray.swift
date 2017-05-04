@@ -203,7 +203,8 @@ extension SortedSet : SetAlgebra {
     ///
     /// - Parameter other: A set of the same type as the current set.
     public mutating func formUnion(_ other: SortedSet) {
-        content = SortedArray(content + other.content)
+        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
+        content = SortedArray(i)
     }
     
     /// Inserts the given element into the set unconditionally.
