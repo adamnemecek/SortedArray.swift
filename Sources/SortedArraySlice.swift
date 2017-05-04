@@ -24,7 +24,7 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     }
     
     public init(arrayLiteral literal: Element...) {
-        base = SortedArray()
+        base = SortedArray(literal)
         self.startIndex = base.startIndex
         self.endIndex = base.endIndex
     }

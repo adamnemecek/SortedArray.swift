@@ -58,9 +58,9 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
             return content[index]
         }
         set {
-            guard content.contains(self[index]) else { return }
-            
-
+            let c = self[index]
+            guard c != newValue, !contains(newValue) else { return }
+            content[index] = newValue
         }
     }
     
@@ -82,36 +82,16 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     
     public subscript(range: Range<Index>) -> SubSequence {
         get {
-            
-            return SortedSlice(base: content, range: range)
+            return content[range]
         }
         set {
-            //            content[range] = newValue
-            fatalError()
+            content[range] = newValue
         }
     }
     
     public func index(after i: Index) -> Index {
         return i + 1
     }
-    
-    //    extension Array {
-    //        func insertionIndexOf(elem: Element, isOrderedBefore: (Element, Element) -> Bool) -> Int {
-    //            var lo = 0
-    //            var hi = self.count - 1
-    //            while lo <= hi {
-    //                let mid = (lo + hi)/2
-    //                if isOrderedBefore(self[mid], elem) {
-    //                    lo = mid + 1
-    //                } else if isOrderedBefore(elem, self[mid]) {
-    //                    hi = mid - 1
-    //                } else {
-    //                    return mid // found at position mid
-    //                }
-    //            }
-    //            return lo // not found, would be inserted at position lo
-    //        }
-    //    }
     
     public func index(of element: Element, insertion: Bool = false) -> Index? {
         return content.index(of: element, insertion: insertion)
@@ -152,8 +132,8 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-        fatalError()
-//        content.sort(by: cmp)
+        content.replaceSubrange(subrange, with: [])
+        content.append(contentsOf: newElements)
     }
     
     
