@@ -82,6 +82,10 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
             guard !base.contains($0) else { return }
             base.append($0)
         }
+        
+        let i = indices.clamped(to: base.indices)
+        startIndex = i.lowerBound
+        endIndex = i.upperBound
 
     }
 
