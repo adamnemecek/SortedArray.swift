@@ -88,8 +88,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
             return SortedSlice(base: self, range: range)
         }
         set {
-            //            content[range] = newValue
-            fatalError()
+            replaceSubrange(range, with: newValue)
         }
     }
     
@@ -124,7 +123,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     }
     
     public func index(before i: Index) -> Index {
-        return i + 1
+        return i - 1
     }
     
     public func min() -> Element? {
@@ -147,17 +146,9 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         return content.debugDescription
     }
     
-    @discardableResult
-    mutating
-    internal func uniquelyInsert(newElement: Element) -> Index? {
-        return index(of: newElement, insertion: true).map {
-            self.content.insert(newElement, at: $0)
-            return $0
-        }
-    }
-    
     public mutating func append(_ newElement: Element) {
-        uniquelyInsert(newElement: newElement)
+        let idx = index(of: newElement, insertion: true)!
+        content.insert(newElement, at: idx)
     }
     
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
@@ -165,8 +156,15 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         content.sort(by: cmp)
     }
     
+    public mutating func removeAll(keepingCapacity keepCapacity: Bool) {
+        return content.removeAll(keepingCapacity: keepCapacity)
+    }
     
     public func formIndex(after i: inout Int) {
+        i += 1
+    }
+    
+    public func formIndex(before i: inout Int) {
         i += 1
     }
     
