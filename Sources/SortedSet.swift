@@ -1,26 +1,19 @@
 //
-//  SortedArray.swift
-//  RangeDB
+//  SortedSet.swift
+//  SortedCollections
 //
 //  Created by Adam Nemecek on 4/29/17.
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-internal extension Collection {
-    var match: (head: Iterator.Element, tail: SubSequence)? {
-        return first.map {
-            ($0, dropFirst())
-        }
-    }
-}
-
-
-
-public struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
-    public typealias Index = Int
+public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public typealias Index = SortedArray<Element>.Index
+    
     
     public typealias SubSequence = SortedSlice<Element>
-    internal var content: [Element]
+    internal var content: SortedArray<Element>
+    
     public typealias Cmp = ((Element, Element)) -> Bool
     
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
@@ -40,20 +33,16 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
                 return e != prev ? e : nil
             }
             } ?? []
+        
+        
     }
     
     public init() {
         self = []
     }
     
-    internal init(sorted: [Element]) {
-        assert(sorted == sorted.sorted())
-        content = sorted
-        cmp = SortedArray.cmp
-    }
-    
     public init<S : Sequence >(_ sequence: S) where S.Iterator.Element == Element {
-        self.init(sequence, cmp: SortedArray.cmp)
+        self.init(sequence, cmp: SortedSet.cmp)
     }
     
     public init(arrayLiteral literal: Element...) {
@@ -73,14 +62,13 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
             return content[index]
         }
         set {
-            guard newValue != self[index] else { return }
-            content.remove(at: index)
-            insert(newValue)
+            guard content.contains(self[index]) else { return }
+
         }
     }
     
     public func sorted() -> [Element] {
-        return content
+        return content.sorted()
     }
     
     public func sort() {
@@ -92,13 +80,13 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     }
     
     public func contains(_ element: Element) -> Bool {
-        return index(of: element) != nil
+        return content.contains(element)
     }
     
     public subscript(range: Range<Index>) -> SubSequence {
         get {
             
-            return SortedSlice(base: self, range: range)
+            return SortedSlice(base: content, range: range)
         }
         set {
             //            content[range] = newValue
@@ -129,34 +117,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     //    }
     
     public func index(of element: Element, insertion: Bool = false) -> Index? {
-        var i = indices
-        
-        while !i.isEmpty {
-            let mid = i.mid
-            let _$0 = self[mid]
-            
-            if _$0 == element {
-                if insertion {
-                    return nil
-                }
-                else {
-                    return mid
-                }
-            }
-                
-            else if cmp(_$0, element) {
-                i = i.lowerBound..<mid
-            }
-            else {
-                i = (mid + 1)..<i.upperBound
-            }
-        }
-        if insertion {
-            return i.lowerBound
-        }
-        else {
-            return nil
-        }
+        return content.index(of: element, insertion: insertion)
     }
     
     public func index(of element: Element) -> Index? {
@@ -168,14 +129,14 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     }
     
     public func min() -> Element? {
-        return first
+        return content.min()
     }
     
     public func max() -> Element? {
-        return last
+        return content.max()
     }
     
-    public static func ==(lhs: SortedArray, rhs: SortedArray) -> Bool {
+    public static func ==(lhs: SortedSet, rhs: SortedSet) -> Bool {
         return lhs.content == rhs.content
     }
     
@@ -187,36 +148,18 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         return content.debugDescription
     }
     
-    @discardableResult
-    mutating
-    internal func uniquelyInsert(newElement: Element) -> Index? {
-        return index(of: newElement, insertion: true).map {
-            self.content.insert(newElement, at: $0)
-            return $0
-        }
-    }
     
     public mutating func append(_ newElement: Element) {
-        uniquelyInsert(newElement: newElement)
+        guard !contains(newElement) else { return }
+        append(newElement)
     }
     
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-        content.replaceSubrange(subrange, with: newElements)
+        fatalError()
         content.sort(by: cmp)
     }
     
     
-    public func formIndex(after i: inout Int) {
-        i += 1
-    }
     
-    
-    
-    @inline(__always)
-    private static func cmp(_ a: Element, _ b: Element) -> Bool {
-        return a < b
-    }
-    
-    internal let cmp : Cmp
 }
 

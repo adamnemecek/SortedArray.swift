@@ -1,12 +1,12 @@
 //
-//  SortedArraySlice.swift
+//  SortedSlice.swift
 //  RangeDB
 //
 //  Created by Adam Nemecek on 4/29/17.
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-public struct SortedArraySlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
+public struct SortedSlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
 RangeReplaceableCollection, CustomStringConvertible {
     
     public typealias Base = SortedArray<Element>
@@ -63,15 +63,15 @@ RangeReplaceableCollection, CustomStringConvertible {
         self.init(base: Base(), range: base.indices)
     }
     
-    public static func ==(lhs: SortedArraySlice, rhs: SortedArraySlice) -> Bool {
+    public static func ==(lhs: SortedSlice, rhs: SortedSlice) -> Bool {
         return lhs.elementsEqual(rhs)
     }
     
-    mutating
-    public
-    func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-        base.replaceSubrange(subrange, with: newElements)
-    }
+//    mutating
+//    public
+//    func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
+//        base.replaceSubrange(subrange, with: newElements)
+//    }
 
 }
 
