@@ -43,6 +43,9 @@ while let n = u.next() {
 //    }
 //}
 
-for e in SortedSet(b) {
+let c = SortedSet(b)
+//let ii = s.intersection(c)
+//print(s.intersection(c))
+for e in s.symmetricDifference(c) {
     print(e)
 }

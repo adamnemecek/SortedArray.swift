@@ -121,11 +121,11 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public var description: String {
-        return content.description
+        return map { "\($0)" }.joined(separator: ", ")
     }
     
     public var debugDescription: String {
-        return content.debugDescription
+        return content.description
     }
     
     public mutating func append(_ newElement: Element) {
@@ -341,8 +341,16 @@ extension SortedSet : SetAlgebra {
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
         let i = intersection(other)
-        return SortedSet(content: union(other).filter { i.contains($0) }, cmp: content.cmp)
+        return SortedSet(content: union(other).filter { !i.contains($0) }, cmp: cmp)
     }
+    
+//    public func isSubset(of other: SortedSet) -> Bool {
+//        fatalError()
+//    }
+//    
+//    public func isDisjoint(with other: SortedSet<Element>) -> Bool {
+//        
+//    }
     
     /// Returns a new set with the elements that are common to both this set and
     /// the given set.
@@ -365,7 +373,7 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func intersection(_ other: SortedSet) -> SortedSet {
-        return SortedSet(filter { other.contains($0) }, cmp: content.cmp)
+        return SortedSet(content: filter { other.contains($0) }, cmp: cmp)
     }
     
     /// Returns a new set with the elements of both this and the given set.
@@ -394,9 +402,7 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func union(_ other: SortedSet) -> SortedSet {
-        return SortedSet(content + other.content, cmp: content.cmp)
-//        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
-//        return SortedSet(i, cmp: content.cmp)
+        return SortedSet(content + other.content, cmp: cmp)
     }
     
     //    public func contains(_ member: Element) -> Bool {

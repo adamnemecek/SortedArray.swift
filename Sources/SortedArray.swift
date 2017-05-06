@@ -132,7 +132,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     }
     
     public var description: String {
-        return content.description
+        return "\(content)"
     }
     
     public var debugDescription: String {
