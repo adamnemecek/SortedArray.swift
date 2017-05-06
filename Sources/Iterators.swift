@@ -12,6 +12,11 @@ protocol CachingIter : IteratorProtocol {
     var current : Element? { get }
 }
 
+protocol SetCombinatorIterator : IteratorProtocol {
+    
+    init<S : Sequence>(a: S, b: S, cmp: @escaping (Element, Element) -> Bool) where S.Iterator.Element == Element
+}
+
 struct CachingIterator<S: Sequence> : IteratorProtocol {
     typealias Element = S.Iterator.Element
     
@@ -30,14 +35,16 @@ struct CachingIterator<S: Sequence> : IteratorProtocol {
 }
 
 
-struct UnionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : Comparable {
+public struct UnionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : Comparable {
     
-    typealias Element = S.Iterator.Element
+    public typealias Element = S.Iterator.Element
     
-    var a, b: CachingIterator<S>
-    var cmp: (Element, Element) -> Bool
+    private var a, b: CachingIterator<S>
+    private var cmp: (Element, Element) -> Bool
     
-    init(a: S, b: S, cmp: @escaping (Element, Element) -> Bool) {
+    public init(a: S, b: S, cmp: @escaping (Element, Element) -> Bool) {
+        assert(a.sorted().elementsEqual(a))
+        assert(b.sorted().elementsEqual(b))
         self.a = CachingIterator(a)
         self.b = CachingIterator(b)
         self.cmp = cmp
@@ -45,40 +52,41 @@ struct UnionIterator<S: Sequence> : IteratorProtocol where S.Iterator.Element : 
     
     private(set) var current : Element?
     
-    mutating
+    public mutating
     func next() -> Element? {
-        switch (a.current, b.current) {
-        case let (.some(l), .some(r)):
-            if l == r {
-                _ = a.next()
-                _ = b.next()
-                current = l
-                return l
-            }
-            else if cmp(l, r) {
-                _ = a.next()
-                current = l
-                return l
-            }
-            
-            _ = b.next()
-            current = r
-            return r
-            
-        case let (.some(l), nil):
-            _ = a.next()
-            current = l
-            return l
-            
-        case let (nil, .some(r)):
-            _ = b.next()
-            current = r
-            return r
-
-        case (nil, nil):
-            current = nil
-            return nil
-        }
+        return nil
+//        switch (a.current, b.current) {
+//        case let (.some(l), .some(r)):
+//            if l == r {
+//                _ = a.next()
+//                _ = b.next()
+//                current = l
+//                return l
+//            }
+//            else if cmp(l, r) {
+//                _ = a.next()
+//                current = l
+//                return l
+//            }
+//            
+//            _ = b.next()
+//            current = r
+//            return r
+//            
+//        case let (.some(l), nil):
+//            _ = a.next()
+//            current = l
+//            return l
+//            
+//        case let (nil, .some(r)):
+//            _ = b.next()
+//            current = r
+//            return r
+//
+//        case (nil, nil):
+//            current = nil
+//            return nil
+//        }
     }
 }
 

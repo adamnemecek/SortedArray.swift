@@ -70,7 +70,7 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     }
     
     public static func ==(lhs: SortedSlice, rhs: SortedSlice) -> Bool {
-        return lhs.elementsEqual(rhs)
+        return lhs.count == rhs.count && lhs.elementsEqual(rhs)
     }
     
     mutating

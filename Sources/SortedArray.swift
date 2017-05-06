@@ -24,8 +24,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public typealias Cmp = ((Element, Element)) -> Bool
     
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
-        /// we could call `contains` as we go through, but this is linear time
-        self.content = sequence.sorted()
+        self.content = sequence.sorted(by: cmp)
         self.cmp = cmp
     }
     
@@ -33,10 +32,10 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         self = []
     }
     
-    internal init(sorted: [Element], cmp: Cmp) {
+    internal init(sorted: [Element], cmp: @escaping Cmp) {
         assert(sorted == sorted.sorted())
         content = sorted
-        self.cmp = SortedArray.cmp
+        self.cmp = cmp
     }
     
     public init<S : Sequence>(_ sequence: S) where S.Iterator.Element == Element {

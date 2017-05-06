@@ -43,6 +43,7 @@ extension BidirectionalCollection {
     
     func lastIndex(where: (Iterator.Element) -> Bool) -> Index? {
         return sequence(first: lastIndex) {
+            /// note that the last generated element is still startIndex
             guard $0 > self.startIndex else { return nil }
             return self.index(before: $0)
         }.first { `where`(self[$0]) }
