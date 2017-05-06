@@ -137,7 +137,6 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         content.replaceSubrange(subrange, with: [])
         content.append(contentsOf: newElements)
     }
-
 }
 
 extension SortedSet : SetAlgebra {
@@ -162,8 +161,7 @@ extension SortedSet : SetAlgebra {
     public mutating func formSymmetricDifference(_ other: SortedSet) {
         self = symmetricDifference(other)
     }
-    
-    
+
     /// Removes the elements of this set that aren't also in the given set.
     ///
     /// In the following example, the elements of the `employees` set that are
@@ -308,6 +306,8 @@ extension SortedSet : SetAlgebra {
     ///   other means.
     @discardableResult
     public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+//         let idx = index(of: newMember, insertion: true)
+        
         return index(of: newMember, insertion: true).map {
             content.insert(newMember, at: $0)
             return (true, newMember)
@@ -341,6 +341,7 @@ extension SortedSet : SetAlgebra {
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
         let i = intersection(other)
+        /// we call the sorted thing directly because
         return SortedSet(content: union(other).filter { !i.contains($0) }, cmp: cmp)
     }
     
