@@ -389,8 +389,9 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func union(_ other: SortedSet) -> SortedSet {
-        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
-        return SortedSet(i, cmp: content.cmp)
+        return SortedSet(content + other.content, cmp: content.cmp)
+//        let i = AnyIterator(UnionIterator(a: content, b: other.content, cmp: content.cmp))
+//        return SortedSet(i, cmp: content.cmp)
     }
     
     //    public func contains(_ member: Element) -> Bool {
