@@ -131,7 +131,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
             if _$0 == element {
                 return mid
             }
-                
             else if cmp(element, _$0) {
                 i = i.lowerBound..<mid
             }

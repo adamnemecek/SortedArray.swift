@@ -28,6 +28,7 @@ struct CachingIterator<S: Sequence> : IteratorProtocol {
         i = sequence.makeIterator()
         current = i.next()
     }
+
     mutating func next() -> S.Iterator.Element? {
         current = i.next()
         return current

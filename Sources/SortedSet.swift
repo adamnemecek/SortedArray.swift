@@ -121,7 +121,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     }
     
     public mutating func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
-        content.replaceSubrange(subrange, with: [])
+        content.removeSubrange(subrange)
         content.append(contentsOf: newElements)
     }
 }
@@ -293,8 +293,6 @@ extension SortedSet : SetAlgebra {
     ///   other means.
     @discardableResult
     public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
-//         let idx = index(of: newMember, insertion: true)
-        
         return index(of: newMember, insertion: true).map {
             content.insert(newMember, at: $0)
             return (true, newMember)
