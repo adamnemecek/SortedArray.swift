@@ -16,7 +16,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping SortedArray<Element>.Cmp) where S.Iterator.Element == Element {
         let arr = sequence.sorted(by: cmp)
         
-        /// dedup, we could call `contains` as we go through, but this is linear time
+        /// unique, we could call `contains` as we go through, but this is linear time
         
         let unique: [Element] = arr.match.map { fst in
             var prev = fst.head
@@ -28,7 +28,12 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
                 return e != prev ? e : nil
             }
         } ?? []
-        content = SortedArray(sorted: unique, cmp: cmp)
+        
+        self.init(content: unique, cmp: cmp)
+    }
+    
+    fileprivate init(content: [Element], cmp: @escaping SortedArray<Element>.Cmp) {
+        self.content = SortedArray(sorted: content, cmp: cmp)
     }
     
     public init() {
@@ -236,9 +241,12 @@ extension SortedSet : SetAlgebra {
         }
     }
     
+    fileprivate var cmp : Cmp<Element> {
+        return content.cmp
+    }
+    
     public func subtracting(_ other: SortedSet) -> SortedSet {
-        let i = AnyIterator(SubtractionIterator(a: content, b: other.content, cmp: content.cmp))
-        return SortedSet(i, cmp: content.cmp)
+        return SortedSet(content: filter { !other.contains($0) }, cmp: cmp)
     }
     
     //    @discardableResult
@@ -333,9 +341,7 @@ extension SortedSet : SetAlgebra {
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
         let i = intersection(other)
-        return SortedSet((content + other.content).filter {
-            !i.contains($0)
-        }, cmp: content.cmp)
+        return SortedSet(content: union(other).filter { i.contains($0) }, cmp: content.cmp)
     }
     
     /// Returns a new set with the elements that are common to both this set and

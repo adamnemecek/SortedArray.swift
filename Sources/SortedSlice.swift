@@ -6,6 +6,7 @@
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
+
 public struct SortedSlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
 RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     
