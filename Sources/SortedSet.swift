@@ -13,13 +13,13 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
 
     fileprivate var content: SortedArray<Element>
     
-    internal init<S: Sequence>(_ sequence: S, cmp: @escaping SortedArray<Element>.Cmp) where S.Iterator.Element == Element {
+    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Relation<Element>) where S.Iterator.Element == Element {
         let unique: [Element] = sequence.sorted(by: cmp).unique()
         
         self.init(content: unique, cmp: cmp)
     }
     
-    fileprivate init(content: [Element], cmp: @escaping SortedArray<Element>.Cmp) {
+    fileprivate init(content: [Element], cmp: @escaping Relation<Element>) {
         self.content = SortedArray(sorted: content, cmp: cmp)
     }
     
@@ -52,18 +52,6 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
             guard c != newValue, !contains(newValue) else { return }
             content[index] = newValue
         }
-    }
-    
-    public func sorted() -> [Element] {
-        return content.sorted()
-    }
-    
-    public func sort() {
-        return
-    }
-    
-    public var isEmpty : Bool {
-        return content.isEmpty
     }
     
     public func contains(_ element: Element) -> Bool {
@@ -124,9 +112,20 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         content.removeSubrange(subrange)
         content.append(contentsOf: newElements)
     }
+    
+    public func sorted() -> [Element] {
+        return content.sorted()
+    }
+    
+    public func sort() {
+        return
+    }
 }
 
 extension SortedSet : SetAlgebra {
+    public var isEmpty : Bool {
+        return content.isEmpty
+    }
     
     /// Removes the elements of the set that are also in the given set and adds
     /// the members of the given set that are not already in the set.
@@ -226,7 +225,7 @@ extension SortedSet : SetAlgebra {
         }
     }
     
-    fileprivate var cmp : Cmp<Element> {
+    fileprivate var cmp : Relation<Element> {
         return content.cmp
     }
     

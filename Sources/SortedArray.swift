@@ -25,7 +25,7 @@ extension Sequence {
 //        return zip(dropLast(), dropFirst()).all { $0.0 < $0.1 }
 //    }
 //}
-
+public typealias Relation<Element> = (Element, Element) -> Bool
 
 extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
     func unique() -> [Iterator.Element] {
@@ -48,9 +48,9 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     
     public typealias SubSequence = SortedSlice<Element>
     internal var content: [Element]
-    public typealias Cmp = ((Element, Element)) -> Bool
+
     
-    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Cmp) where S.Iterator.Element == Element {
+    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Relation<Element>) where S.Iterator.Element == Element {
         self.content = sequence.sorted(by: cmp)
         self.cmp = cmp
     }
@@ -59,7 +59,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         self = []
     }
     
-    internal init(sorted: [Element], cmp: @escaping Cmp) {
+    internal init(sorted: [Element], cmp: @escaping Relation<Element>) {
         assert(sorted == sorted.sorted())
         content = sorted
         self.cmp = cmp
@@ -209,6 +209,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
         return a < b
     }
     
-    internal var cmp : Cmp
+    internal var cmp : Relation<Element>
 }
 
