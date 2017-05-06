@@ -49,3 +49,36 @@ extension BidirectionalCollection {
         }.first { `where`(self[$0]) }
     }
 }
+
+
+extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
+    func unique() -> [Iterator.Element] {
+        /// unique, we could call `contains` as we go through, but this is linear time
+        return match.map { fst in
+            var prev = fst.head
+            
+            return [prev] + fst.tail.filter { e in
+                defer {
+                    prev = e
+                }
+                return e != prev
+            }
+        } ?? []
+    }
+}
+
+internal extension Collection {
+    var match: (head: Iterator.Element, tail: SubSequence)? {
+        return first.map { ($0, dropFirst()) }
+    }
+}
+
+extension Sequence {
+    func all(predicate: (Iterator.Element) -> Bool) -> Bool {
+        return !contains { !predicate($0) }
+    }
+}
+
+public typealias Predicate<Element> = (Element) -> Bool
+public typealias Relation<Element> = (Element, Element) -> Bool
+

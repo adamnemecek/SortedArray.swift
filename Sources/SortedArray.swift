@@ -6,43 +6,6 @@
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-internal extension Collection {
-    var match: (head: Iterator.Element, tail: SubSequence)? {
-        return first.map {
-            ($0, dropFirst())
-        }
-    }
-}
-
-extension Sequence {
-    func all(predicate: (Iterator.Element) -> Bool) -> Bool {
-        return !contains { !predicate($0) }
-    }
-}
-
-//extension Sequence where Iterator.Element : Comparable, SubSequence : Sequence {
-//    var isSorted: Bool {
-//        return zip(dropLast(), dropFirst()).all { $0.0 < $0.1 }
-//    }
-//}
-public typealias Relation<Element> = (Element, Element) -> Bool
-
-extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
-    func unique() -> [Iterator.Element] {
-        /// unique, we could call `contains` as we go through, but this is linear time
-        return match.map { fst in
-            var prev = fst.head
-            
-            return [prev] + fst.tail.filter { e in
-                defer {
-                    prev = e
-                }
-                return e != prev
-            }
-        } ?? []
-    }
-}
-
 public struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     public typealias Index = Int
     
@@ -50,7 +13,7 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     internal var content: [Element]
 
     
-    internal init<S: Sequence>(_ sequence: S, cmp: @escaping Relation<Element>) where S.Iterator.Element == Element {
+    public init<S: Sequence>(_ sequence: S, cmp: @escaping Relation<Element>) where S.Iterator.Element == Element {
         self.content = sequence.sorted(by: cmp)
         self.cmp = cmp
     }
