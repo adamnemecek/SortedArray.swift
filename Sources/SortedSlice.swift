@@ -26,8 +26,8 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     
     public init(arrayLiteral literal: Element...) {
         base = SortedArray(literal)
-        self.startIndex = base.startIndex
-        self.endIndex = base.endIndex
+        startIndex = base.startIndex
+        endIndex = base.endIndex
     }
 
     internal init(base: Base, range: Range<Index>) {

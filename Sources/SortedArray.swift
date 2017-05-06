@@ -14,6 +14,18 @@ internal extension Collection {
     }
 }
 
+extension Sequence {
+    func all(predicate: (Iterator.Element) -> Bool) -> Bool {
+        return !contains { !predicate($0) }
+    }
+}
+
+//extension Sequence where Iterator.Element : Comparable, SubSequence : Sequence {
+//    var isSorted: Bool {
+//        return zip(dropLast(), dropFirst()).all { $0.0 < $0.1 }
+//    }
+//}
+
 
 extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
     func unique() -> [Iterator.Element] {
@@ -21,11 +33,11 @@ extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.El
         return match.map { fst in
             var prev = fst.head
             
-            return [prev] + fst.tail.flatMap { e in
+            return [prev] + fst.tail.filter { e in
                 defer {
                     prev = e
                 }
-                return e != prev ? e : nil
+                return e != prev
             }
         } ?? []
     }
@@ -87,6 +99,10 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public func sort() {
         return
     }
+    
+//    public func count(of element: Element) -> IndexDistance {
+//        let
+//    }
     
     public func contains(_ element: Element) -> Bool {
         return index(of: element) != nil
