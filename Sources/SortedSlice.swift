@@ -79,7 +79,6 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
         base.replaceSubrange(subrange, with: [])
         
         newElements.forEach {
-            guard !base.contains($0) else { return }
             base.append($0)
         }
         
@@ -87,6 +86,5 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
         startIndex = i.lowerBound
         endIndex = i.upperBound
     }
-
 }
 

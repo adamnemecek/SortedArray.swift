@@ -16,9 +16,9 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping SortedArray<Element>.Cmp) where S.Iterator.Element == Element {
         let arr = sequence.sorted(by: cmp)
         
-        /// we could call `contains` as we go through, but this is linear time
+        /// dedup, we could call `contains` as we go through, but this is linear time
         
-        let a: [Element] = arr.match.map { fst in
+        let unique: [Element] = arr.match.map { fst in
             var prev = fst.head
             
             return [prev] + fst.tail.flatMap { e in
@@ -27,14 +27,13 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
                 }
                 return e != prev ? e : nil
             }
-            } ?? []
-        content = SortedArray(sorted: a, cmp: cmp)
+        } ?? []
+        content = SortedArray(sorted: unique, cmp: cmp)
     }
     
     public init() {
         self = []
     }
-    
     
     public init<S : Sequence>(_ sequence: S) where S.Iterator.Element == Element {
         self.init(sequence, cmp: SortedArray.cmp)
@@ -124,7 +123,6 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
         return content.debugDescription
     }
     
-    
     public mutating func append(_ newElement: Element) {
         guard !contains(newElement) else { return }
         append(newElement)
@@ -199,6 +197,7 @@ extension SortedSet : SetAlgebra {
     ///
     /// - Parameter other: A set of the same type as the current set.
     public mutating func formUnion(_ other: SortedSet) {
+        /// note that this is the only method that needs a dedup
         self = union(other)
     }
     
@@ -333,9 +332,10 @@ extension SortedSet : SetAlgebra {
     /// - Parameter other: A set of the same type as the current set.
     /// - Returns: A new set.
     public func symmetricDifference(_ other: SortedSet) -> SortedSet {
-        let i = AnyIterator(SymmetricDifferenceIterator(a: content, b: other.content, cmp: content.cmp))
-        return SortedSet(i, cmp: content.cmp)
-
+        let i = intersection(other)
+        return SortedSet((content + other.content).filter {
+            !i.contains($0)
+        }, cmp: content.cmp)
     }
     
     /// Returns a new set with the elements that are common to both this set and
@@ -359,8 +359,7 @@ extension SortedSet : SetAlgebra {
     ///   distinguishable (e.g. via `===`), which of these elements is present
     ///   in the result is unspecified.
     public func intersection(_ other: SortedSet) -> SortedSet {
-        let i = AnyIterator(IntersectionIterator(a: content, b: other.content, cmp: content.cmp))
-        return SortedSet(i, cmp: content.cmp)
+        return SortedSet(filter { other.contains($0) }, cmp: content.cmp)
     }
     
     /// Returns a new set with the elements of both this and the given set.

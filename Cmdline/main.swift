@@ -24,21 +24,25 @@ while let n = u.next() {
     print(n)
 }
 
-
-struct UniqueSequence<Element : Equatable> : IteratorProtocol {
-    private var i: AnyIterator<Element>
 //
-    private var last : Element?
-    
-    init<S: Sequence>(_ sequence: S) where S.Iterator.Element == Element {
-        self.i = AnyIterator(sequence.makeIterator())
-        last = i.next()
-    }
-    
-    func next() -> Element? {
-        return nil
-//        while let n = i.next() {
-//            
-//        }
-    }
+//struct UniqueSequence<Element : Equatable> : IteratorProtocol {
+//    private var i: AnyIterator<Element>
+////
+//    private var last : Element?
+//    
+//    init<S: Sequence>(_ sequence: S) where S.Iterator.Element == Element {
+//        self.i = AnyIterator(sequence.makeIterator())
+//        last = i.next()
+//    }
+//    
+//    func next() -> Element? {
+//        return nil
+////        while let n = i.next() {
+////            
+////        }
+//    }
+//}
+
+for e in SortedSet(b) {
+    print(e)
 }
