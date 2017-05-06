@@ -6,7 +6,6 @@
 //  Copyright © 2017 Adam Nemecek. All rights reserved.
 //
 
-
 public struct SortedSlice<Element : Comparable> : MutableCollection, Equatable, RandomAccessCollection,
 RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     
@@ -18,18 +17,22 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     
     private(set) internal var base : Base
     
+    public init() {
+        self = []
+    }
+
+    public init(arrayLiteral literal: Element...) {
+        base = SortedArray(literal)
+        startIndex = base.startIndex
+        endIndex = base.endIndex
+    }
+    
     internal init(base: Base, range: CountableRange<Index>) {
         self.base = base
         startIndex = range.lowerBound
         endIndex = range.upperBound
     }
     
-    public init(arrayLiteral literal: Element...) {
-        base = SortedArray(literal)
-        startIndex = base.startIndex
-        endIndex = base.endIndex
-    }
-
     internal init(base: Base, range: Range<Index>) {
         self.base = base
         startIndex = range.lowerBound
@@ -65,10 +68,6 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
         return Array(self)
     }
     
-    public init() {
-        let base = Base()
-        self.init(base: Base(), range: base.indices)
-    }
     
     public static func ==(lhs: SortedSlice, rhs: SortedSlice) -> Bool {
         return lhs.count == rhs.count && lhs.elementsEqual(rhs)
