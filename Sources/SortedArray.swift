@@ -15,6 +15,22 @@ internal extension Collection {
 }
 
 
+extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
+    func unique() -> [Iterator.Element] {
+        /// unique, we could call `contains` as we go through, but this is linear time
+        return match.map { fst in
+            var prev = fst.head
+            
+            return [prev] + fst.tail.flatMap { e in
+                defer {
+                    prev = e
+                }
+                return e != prev ? e : nil
+            }
+        } ?? []
+    }
+}
+
 public struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     public typealias Index = Int
     

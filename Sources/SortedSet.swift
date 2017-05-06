@@ -14,20 +14,7 @@ public struct SortedSet<Element : Comparable> : MutableCollection, RandomAccessC
     fileprivate var content: SortedArray<Element>
     
     internal init<S: Sequence>(_ sequence: S, cmp: @escaping SortedArray<Element>.Cmp) where S.Iterator.Element == Element {
-        let arr = sequence.sorted(by: cmp)
-        
-        /// unique, we could call `contains` as we go through, but this is linear time
-        
-        let unique: [Element] = arr.match.map { fst in
-            var prev = fst.head
-            
-            return [prev] + fst.tail.flatMap { e in
-                defer {
-                    prev = e
-                }
-                return e != prev ? e : nil
-            }
-        } ?? []
+        let unique: [Element] = sequence.sorted(by: cmp).unique()
         
         self.init(content: unique, cmp: cmp)
     }
