@@ -86,7 +86,6 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
         let i = indices.clamped(to: base.indices)
         startIndex = i.lowerBound
         endIndex = i.upperBound
-
     }
 
 }

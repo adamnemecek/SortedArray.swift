@@ -15,7 +15,6 @@ internal extension Collection {
 }
 
 
-
 public struct SortedArray<Element : Comparable> : MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, RangeReplaceableCollection, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     public typealias Index = Int
     
@@ -71,10 +70,6 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     
     public func sort() {
         return
-    }
-    
-    public var isEmpty : Bool {
-        return content.isEmpty
     }
     
     public func contains(_ element: Element) -> Bool {
