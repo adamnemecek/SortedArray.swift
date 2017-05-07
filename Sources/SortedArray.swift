@@ -166,12 +166,9 @@ public struct SortedArray<Element : Comparable> : MutableCollection, RandomAcces
     public func formIndex(before i: inout Int) {
         i -= 1
     }
-    
-    @inline(__always)
-    internal static func cmp(_ a: Element, _ b: Element) -> Bool {
-        return a < b
-    }
-    
+
+    static var cmp : Relation<Element> { return { $0 < $1 } }
+
     internal var cmp : Relation<Element>
 }
 
