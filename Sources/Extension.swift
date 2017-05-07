@@ -8,12 +8,14 @@
 
 import Foundation
 
+public typealias Predicate<Element> = (Element) -> Bool
+public typealias Relation<Element> = (Element, Element) -> Bool
+
 extension CountableRange {
     var mid : Bound {
         return lowerBound.advanced(by: count / 2)
     }
 }
-
 
 extension Collection {
     subscript(safe index: Index) -> Iterator.Element? {
@@ -50,7 +52,6 @@ extension BidirectionalCollection {
     }
 }
 
-
 extension Collection where Iterator.Element : Equatable, SubSequence.Iterator.Element == Iterator.Element {
     func unique() -> [Iterator.Element] {
         /// unique, we could call `contains` as we go through, but this is linear time
@@ -74,11 +75,9 @@ internal extension Collection {
 }
 
 extension Sequence {
-    func all(predicate: (Iterator.Element) -> Bool) -> Bool {
+    func all(predicate: Predicate<Iterator.Element>) -> Bool {
         return !contains { !predicate($0) }
     }
 }
 
-public typealias Predicate<Element> = (Element) -> Bool
-public typealias Relation<Element> = (Element, Element) -> Bool
 

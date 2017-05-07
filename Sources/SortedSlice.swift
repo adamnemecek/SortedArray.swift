@@ -67,15 +67,13 @@ RangeReplaceableCollection, CustomStringConvertible, ExpressibleByArrayLiteral {
     public func sorted() -> [Element] {
         return Array(self)
     }
-    
-    
+
     public static func ==(lhs: SortedSlice, rhs: SortedSlice) -> Bool {
         return lhs.count == rhs.count && lhs.elementsEqual(rhs)
     }
     
     mutating
-    public
-    func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
+    public func replaceSubrange<C : Collection>(_ subrange: Range<Index>, with newElements: C) where C.Iterator.Element == Element {
         base.replaceSubrange(subrange, with: [])
         
         newElements.forEach {
